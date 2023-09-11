@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&repo=pamelafox%2Ffastapi-azure-function-apim)
 
 This repository includes a simple HTTP API powered by FastAPI, made for demonstration purposes only.
@@ -104,3 +105,6 @@ Costs for this architecture are based on incoming traffic / usage, so cost shoul
 ## Getting help
 
 If you're working with this project and running into issues, please post in [Discussions](/discussions).
+=======
+# WeworkPrueba
+>>>>>>> cb64f4f30e8fe08838eb34d9ec7c72cb64d42f2c
