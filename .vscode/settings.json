@@ -1,6 +1,5 @@
 {
-    "azureFunctions.scmDoBuildDuringDeployment": true,
-    "azureFunctions.projectLanguage": "Python",
-    "azureFunctions.projectRuntime": "~4",
-    "debug.internalConsoleOptions": "neverOpen"
+    "cSpell.words": [
+        "myapp"
+    ]
 }
