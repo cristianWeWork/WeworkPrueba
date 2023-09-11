@@ -18,3 +18,9 @@ def create_app():
 
     app.include_router(fastapi_routes.router)
     return app
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+

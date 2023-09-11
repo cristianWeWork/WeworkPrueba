@@ -15,3 +15,14 @@ async def generate_name(
         names = [n for n in names if n.lower().startswith(starts_with)]
     random_name = random.choice(names)
     return {"name": random_name}
+
+@router.get("/")
+async def prueba():
+    return {"message": "Hello World"}
+
+
+@router.get("/superhero/{superHero}")
+async def superheroCall(superHero:str):
+    frase = "Muy buenas, " + str(superHero).capitalize()
+    
+    return {"message" : str(frase)}
