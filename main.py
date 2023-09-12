@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
 from pydantic import BaseModel
+from resources import translatorApp
 
 
 app = FastAPI()
@@ -14,10 +15,13 @@ class Item(BaseModel):
     user: str
     name: str | None = None
 
-
+class itemTranslated(BaseModel):
+    text: str
+    
+    
 @app.get("/")
 async def prueba():
-    return {"message": "Hello World"}
+    return {"message": "Hola NightCity"}
 
 @app.post("/user/")
 async def create_item(item: Item):
@@ -29,6 +33,18 @@ async def superheroCall(superHero:str):
     frase = "Muy buenas, " + str(superHero).capitalize()
     
     return {"message" : str(frase)}
+
+@app.get("/user/{item_id}")
+async def read_item(item_id: str, q: str | None = None):
+    if q:
+        return {"item_id": item_id, "q": q}
+    return {"item_id": item_id}
+
+@app.post("/translateMe/")
+async def translateFunction(itemTranslated: itemTranslated):
+    text = itemTranslated.text
+    return translatorApp.funcionTraduccion(text)
+    
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)

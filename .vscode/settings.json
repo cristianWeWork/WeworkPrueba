@@ -6,5 +6,7 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.autopep8"
     },
-    "python.formatting.provider": "none"
+    "python.formatting.provider": "none",
+    "appService.defaultWebAppToDeploy": "/subscriptions/578351a0-ae5e-46f3-acca-c2508e335bfd/resourceGroups/weWorkPrueba/providers/Microsoft.Web/sites/we-work-prueba",
+    "appService.deploySubpath": "."
 }
