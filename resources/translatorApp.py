@@ -31,6 +31,6 @@ def funcionTraduccion(texto: str) :
         'text': texto
     }]
     request = requests.post(constructed_url, params=params, headers=headers, json=body)
-    response = translatorKey
+    response = request.json()
     return response
     
