@@ -1,8 +1,13 @@
 import requests, uuid, json
+import os
+from dotenv import load_dotenv
 
-translatorKey = "d6a6d5e318c642a8a84178f06e03058e"
+
 translatorEndpoint = "https://api.cognitive.microsofttranslator.com"
 translatorLocation = "westeurope"
+
+load_dotenv()
+translatorKey = os.getenv('TRANSLATORKEY')
 
 
 path = '/translate'
