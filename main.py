@@ -42,8 +42,8 @@ async def read_item(item_id: str, q: str | None = None):
 @app.post("/translateMe/")
 async def translateFunction(itemTranslated: itemTranslated):
     text = itemTranslated.text
-    return translatorApp.funcionTraduccion(text)
-    
+    # return translatorApp.funcionTraduccion(text)
+    return text
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
