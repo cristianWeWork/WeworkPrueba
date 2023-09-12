@@ -2,3 +2,8 @@ fastapi
 uvicorn
 jinja2
 python-multipart
+azure-functions
+requests
+dotenv
+uuid
+json
