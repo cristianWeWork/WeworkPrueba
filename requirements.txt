@@ -1,6 +1,7 @@
-requests
-uuid
+
 fastapi
 uvicorn
 jinja2
 python-multipart
+requests
+uuid
