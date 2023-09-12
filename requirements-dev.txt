@@ -7,6 +7,3 @@ coverage
 pytest-cov
 pre-commit
 uvicorn[standard]
-requests
-uuid
-json
