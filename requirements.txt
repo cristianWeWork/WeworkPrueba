@@ -3,6 +3,3 @@ fastapi
 uvicorn
 jinja2
 python-multipart
-requests
-uuid
-python-dotenv
