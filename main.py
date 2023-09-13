@@ -6,7 +6,9 @@ import uvicorn
 from pydantic import BaseModel
 from resources import translatorApp
 import os
-
+from dotenv import load_dotenv
+load_dotenv()
+translatorKey = os.getenv('TRANSLATORKEY')
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -42,9 +44,9 @@ async def read_item(item_id: str, q: str | None = None):
 
 @app.post("/translateMe/")
 async def translateFunction(itemTranslated: itemTranslated):
-    text = itemTranslated.text
+    # text = itemTranslated.text
     # return translatorApp.funcionTraduccion(text)
-    
+    text = translatorKey
     return text
 
 if __name__ == '__main__':
