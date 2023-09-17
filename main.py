@@ -27,7 +27,8 @@ class Item(BaseModel):
 
 class itemTranslated(BaseModel):
     text: str
-    
+
+
     
 @app.get("/")
 async def prueba():
@@ -54,6 +55,12 @@ async def read_item(item_id: str, q: str | None = None):
 async def translateFunction(itemTranslated: itemTranslated):
     text = itemTranslated.text
     return translatorApp.funcionTraduccion(text)
+
+@app.post("/speechMeThat/")
+async def textToSpeech(itemToSpeech: any):
+    
+    return {"message": "XD"}
+    
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
