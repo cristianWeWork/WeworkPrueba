@@ -24,15 +24,9 @@ def getVoicesList():
     
     }
     request: object = requests.get(requestUrl,  headers=headers)
-    seen = set() 
-
-    # never use list as a variable name
+   
     if request.status_code == 200:
-        # Obtener el contenido JSON de la respuesta
         response_data = request.json()
-
-        # Asumiendo que response_data es una lista de diccionarios similar a tu ejemplo anterior
-        # Usar una comprensión de lista para obtener los valores de 'LocaleName'
         locale_names = [item["LocaleName"] for item in response_data]
 
         # Imprimir el array resultante
@@ -43,4 +37,19 @@ def getVoicesList():
     else:
         print("La solicitud no fue exitosa. Código de estado:", request.status_code)
     
-  
+
+def getVoiceOptions(nationality: str):
+    requestUrl = "https://westeurope.tts.speech.microsoft.com/cognitiveservices/voices/list"
+    headers = {
+        'Ocp-Apim-Subscription-Key': speechKey,
+        'Content-type': 'application/json',
+    
+    }
+    request: object = requests.get(requestUrl,  headers=headers)
+    print("Hola")
+    if request.status_code == 200:
+        response_data = request.json()
+        resultados = [objeto for objeto in response_data if objeto["LocaleName"] == nationality]
+        return resultados
+    else:
+        print("La solicitud no fue exitosa. Código de estado:", request.status_code)

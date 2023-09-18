@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 from pydantic import BaseModel
 from resources import translatorApp
-from resources.textToSpeech import getVoicesList 
+from resources.textToSpeech import getVoicesList, getVoiceOptions
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -61,6 +61,10 @@ async def textToSpeech():
     print("Hola")
     return getVoicesList()
     
+@app.get("/getVoiceFindDetails/")
+async def getVoiceDetail(nationality: str):
+        return getVoiceOptions(nationality)
+
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
