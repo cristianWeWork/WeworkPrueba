@@ -5,12 +5,12 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 from pydantic import BaseModel
 from resources import translatorApp
+from resources.textToSpeech import getVoicesList 
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 origins = ["*"]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -56,10 +56,10 @@ async def translateFunction(itemTranslated: itemTranslated):
     text = itemTranslated.text
     return translatorApp.funcionTraduccion(text)
 
-@app.post("/speechMeThat/")
-async def textToSpeech(itemToSpeech: any):
-    
-    return {"message": "XD"}
+@app.get("/getVoicesList/")
+async def textToSpeech():
+    print("Hola")
+    return getVoicesList()
     
 
 if __name__ == '__main__':

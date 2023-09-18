@@ -2,7 +2,6 @@ import requests
 import os
 from dotenv import load_dotenv
 
-
 translatorEndpoint = "https://api.cognitive.microsofttranslator.com"
 translatorLocation = "westeurope"
 
@@ -33,4 +32,5 @@ def funcionTraduccion(texto: str) :
     request = requests.post(constructed_url, params=params, headers=headers, json=body)
     response = request.json()
     return response
-    
+
+
