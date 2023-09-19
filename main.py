@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 from pydantic import BaseModel
 from resources import translatorApp
-from resources.textToSpeech import getVoicesList, getVoiceOptions
+from resources.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -28,7 +28,9 @@ class Item(BaseModel):
 class itemTranslated(BaseModel):
     text: str
 
-
+class itemToSpeech(BaseModel):
+    text:str
+    voice: str
     
 @app.get("/")
 async def prueba():
@@ -63,8 +65,11 @@ async def textToSpeech():
     
 @app.get("/getVoiceFindDetails/")
 async def getVoiceDetail(nationality: str):
-        return getVoiceOptions(nationality)
-
+    return getVoiceOptions(nationality)
+    
+@app.post("/SpeechToText/")
+async def getTextToSpeech(item :itemToSpeech):
+    return getAudioText(item.text, item.voice)
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
