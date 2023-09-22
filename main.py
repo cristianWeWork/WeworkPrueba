@@ -69,7 +69,11 @@ async def getVoiceDetail(nationality: str):
     
 @app.post("/SpeechToText/")
 async def getTextToSpeech(item :itemToSpeech):
-    return getAudioText(item.text, item.voice)
+    archivo_audio, visemes = getAudioText(item.text, item.voice)
+    response = FileResponse(archivo_audio)
+    response.headers["data"] = str(visemes)
+    print(visemes)
+    return {"data":visemes}
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
