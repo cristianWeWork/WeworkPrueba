@@ -1,6 +1,6 @@
 import os
 import azure.cognitiveservices.speech as speechsdk
-from azure.cognitiveservices.speech.audio import AudioOutputConfig
+from azure.cognitiveservices.speech.audio import AudioOutputConfig, AudioOutputStream
 from dotenv import load_dotenv
 import requests
 from fastapi.responses import FileResponse
@@ -52,10 +52,10 @@ def getVoiceOptions(nationality: str):
         
         
 def getAudioText(text: str, voice: str):
-
+    aos = AudioOutputStream(None) 
     speech_config = speechsdk.SpeechConfig(subscription=speechKey, region="westeurope")
     file_name = "outputaudio.wav"
-    file_config = speechsdk.audio.AudioOutputConfig(filename=file_name)
+    file_config = speechsdk.audio.AudioOutputConfig(filename=file_name,stream = aos )
     speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=file_config)
     speech_config.speech_synthesis_voice_name = voice
     speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config = file_config)

@@ -8,7 +8,7 @@ from resources import translatorApp
 from resources.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
 import os
 from fastapi.middleware.cors import CORSMiddleware
-
+import resources.database.database_connections as bbdd
 app = FastAPI()
 origins = ["*"]
 app.add_middleware(
@@ -31,6 +31,16 @@ class itemTranslated(BaseModel):
 class itemToSpeech(BaseModel):
     text:str
     voice: str
+    
+class AIobject(BaseModel):
+    voz:str
+    text: str
+    idioma:str
+    format: str
+    url_audio: str
+    feelings: str
+    blendShapes: str
+    visemes: str
     
 @app.get("/")
 async def prueba():
@@ -74,6 +84,28 @@ async def getTextToSpeech(item :itemToSpeech):
     response.headers["data"] = str(visemes)
     print(visemes)
     return {"data":visemes}
+
+@app.get("/getDBName")
+async def getDBName():
+    return bbdd.showDBlist()
+    
+@app.post("/insert/")
+async def insertIntoDB(object: AIobject):
+    return bbdd.insert_document(object)
+
+@app.get("/query/")
+async def getFromDB(object: AIobject):
+    return bbdd.find_document(object)
+
+@app.post("/update/")
+async def updateIntoDB(query, object: AIobject):
+    return bbdd.update_document(query, object)
+
+@app.post("/delete/")
+async def deleteFromDB(query):
+    return bbdd.delete_document(query)
+
+
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
