@@ -1,14 +1,18 @@
-from fastapi import FastAPI, Form, Request, status
-from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
+from logging.config import dictConfigClass
+from fastapi import FastAPI, Form, Request, status, File, UploadFile
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from typing import List, Annotated
 import uvicorn
 from pydantic import BaseModel
 from resources import translatorApp
 from resources.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
 import os
 from fastapi.middleware.cors import CORSMiddleware
-import resources.database.database_connections as bbdd
+import resources.database_dir.database_connections as bbdd
+import resources.chatgpy as chatai
+
 app = FastAPI()
 origins = ["*"]
 app.add_middleware(
@@ -21,6 +25,11 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+def get_streamed_ai_response(response):
+    for chunk in response: 
+        yield chunk['choices'][0]['delta'].get("content", "")
+
+
 class Item(BaseModel):
     user: str
     name: str | None = None
@@ -31,7 +40,18 @@ class itemTranslated(BaseModel):
 class itemToSpeech(BaseModel):
     text:str
     voice: str
-    
+    language:str
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "voz": "es-CU-BelkysNeural",
+                    "text":"Muy buenas, Bienvenidos a los juegos del hambre",
+                    "idioma": "Spanish (Cuba)",
+                }
+            ]
+        }
+    }
 class AIobject(BaseModel):
     voz:str
     text: str
@@ -41,28 +61,15 @@ class AIobject(BaseModel):
     feelings: str
     blendShapes: str
     visemes: str
+class Message(BaseModel):
+    role: str
+    content: str
+
     
 @app.get("/")
-async def prueba():
-    return {"message": "Hola NightCity"}
-
-@app.post("/user/")
-async def create_item(item: Item):
-    frase = "Muy buenas, " + str(item.name) + ", tu nombre de usuario es: " + str(item.user)
-    return {"message": frase}
+async def  welcomeToNightCity():
+    return {"text": "Hola NightCity"}
     
-@app.get("/superhero/{superHero}")
-async def superheroCall(superHero:str):
-    frase = "Muy buenas, " + str(superHero).capitalize()
-    
-    return {"message" : str(frase)}
-
-@app.get("/user/{item_id}")
-async def read_item(item_id: str, q: str | None = None):
-    if q:
-        return {"item_id": item_id, "q": q}
-    return {"item_id": item_id}
-
 @app.post("/translateMe/")
 async def translateFunction(itemTranslated: itemTranslated):
     text = itemTranslated.text
@@ -74,16 +81,31 @@ async def textToSpeech():
     return getVoicesList()
     
 @app.get("/getVoiceFindDetails/")
-async def getVoiceDetail(nationality: str):
+async def getVoiceDetail(nationality: str) -> list:
     return getVoiceOptions(nationality)
     
 @app.post("/SpeechToText/")
-async def getTextToSpeech(item :itemToSpeech):
-    archivo_audio, visemes = getAudioText(item.text, item.voice)
-    response = FileResponse(archivo_audio)
-    response.headers["data"] = str(visemes)
-    print(visemes)
-    return {"data":visemes}
+async def getTextToSpeech(item :itemToSpeech) :
+    query = {
+        "voz": item.voice,
+        "text": item.text
+    }
+    result = bbdd.find_document(query)
+    if result == None:
+        url_audio = await getAudioText(item.text, item.voice, item.language)
+        response = {
+            "url_audio" : url_audio
+        }
+        return response
+    else:
+        
+        response = {
+            "url_audio" : result['url_audio'],
+            
+        }
+        
+        return response
+         
 
 @app.get("/getDBName")
 async def getDBName():
@@ -105,7 +127,19 @@ async def updateIntoDB(query, object: AIobject):
 async def deleteFromDB(query):
     return bbdd.delete_document(query)
 
+@app.post("/message")
+async def chatingWithAi(pdf_file:  Annotated[UploadFile, File()] ):
+    
+    response = await chatai.chatingWithchatGpt(pdf_file)
 
+    return response
+
+@app.post("/ContinueMessage")
+async def chatingContWithAi(messages: List[Message]):
+    
+    response = await chatai.chatingContWithAi(messages)
+
+    return response
 
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)

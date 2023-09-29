@@ -27,7 +27,11 @@ def update_document(query, data):
     updated_doc = collection.update_one(query, {"$set": data})
     return updated_doc.modified_count
 
+def update_url_audio(query, data):
+    updated_doc = collection.update_one(query, {"$set" : data})
+    return updated_doc.modified_count
 # Delete (Borrar)
 def delete_document(query):
     deleted_doc = collection.delete_one(query)
     return deleted_doc.deleted_count
+    
