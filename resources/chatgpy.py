@@ -41,7 +41,7 @@ async def chatingWithchatGpt(pdfFile):
             {"role": "user", "content": "Por favor, proporciona información sobre el tema."},
             {"role": "assistant", "content": initial_context},
         ],
-        max_tokens=50,
+        # max_tokens=50,
     )
     
 
