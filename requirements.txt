@@ -7,8 +7,6 @@ python-dotenv
 requests
 azure.cognitiveservices.speech
 azure-storage-blob
-fastapi.middleware.cors
 PyPDF2
-BytesIO
 openai
 pymongo
