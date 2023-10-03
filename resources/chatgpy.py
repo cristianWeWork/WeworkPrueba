@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from typing import List
+from typing import List, Dict
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import openai
@@ -7,13 +7,19 @@ from fastapi.responses import StreamingResponse
 import PyPDF2
 from io import BytesIO
 
+from pydantic import BaseModel
+
 openai.api_key = os.getenv('OPENAPI_KEY')
 
 def get_streamed_ai_response(response):
     for chunk in response: 
         yield chunk['choices'][0]['delta'].get("content", "")
 
+class Message(BaseModel):
+    role: str
+    content: str
 
+    
 def extract_text_from_pdf(pdf_content):
     pdf = pdf_content.file.read()
     
@@ -29,7 +35,7 @@ def extract_text_from_pdf(pdf_content):
     
     return text
 
-async def chatingWithchatGpt(pdfFile):
+async def chatingWithchatGpt(pdfFile, whoAmI):
     pdf_Text = extract_text_from_pdf(pdfFile)
 
     initial_context = f"El contenido del PDF es: {pdf_Text}"
@@ -37,7 +43,7 @@ async def chatingWithchatGpt(pdfFile):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
          messages=[
-            {"role": "system", "content": "Eres un profesor de ciencias"},
+            {"role": "system", "content": whoAmI},
             {"role": "user", "content": "Por favor, proporciona información sobre el tema."},
             {"role": "assistant", "content": initial_context},
         ],
@@ -48,12 +54,12 @@ async def chatingWithchatGpt(pdfFile):
     return {"response": response}
 
 
-async def chatingContWithAi(messages):
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[message.dict() for message in messages],
-        stream=True
-    )
+async def chatingContWithAi(messages : List[Message]):
+    response  = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
 
-    return StreamingResponse(get_streamed_ai_response(response), media_type='text/event-stream')
+    chat_response = response
+
+    return chat_response

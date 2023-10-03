@@ -3,7 +3,7 @@ from fastapi import FastAPI, Form, Request, status, File, UploadFile
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from typing import List, Annotated
+from typing import Any, Dict, List, Annotated
 import uvicorn
 from pydantic import BaseModel
 from resources import translatorApp
@@ -128,16 +128,17 @@ async def deleteFromDB(query):
     return bbdd.delete_document(query)
 
 @app.post("/message")
-async def chatingWithAi(pdf_file:  Annotated[UploadFile, File()] ):
+async def chatingWithAi(pdf_file:  Annotated[UploadFile, File()], whoAmI: Annotated[str, "Quien soy?"] = Form(...)):
     
-    response = await chatai.chatingWithchatGpt(pdf_file)
+    response = await chatai.chatingWithchatGpt(pdf_file, whoAmI)
 
     return response
 
 @app.post("/ContinueMessage")
-async def chatingContWithAi(messages: List[Message]):
-    
-    response = await chatai.chatingContWithAi(messages)
+async def chatingContWithAi(request: Request):
+    data = await request.json()
+    print(data)
+    response = await chatai.chatingContWithAi(data)
 
     return response
 
