@@ -19,8 +19,13 @@ def insert_document(data):
 
 # Read (Leer)
 def find_document(query):
-    result = collection.find_one(query, {'_id': 0})
+    result = collection.find_one(query, sort=[("_id", -1)])
+    print (result)
+    if result and "_id" in result:
+        del result["_id"]
+
     return result
+    
 
 # Update (Actualizar)
 def update_document(query, data):
