@@ -10,5 +10,6 @@ azure-storage-blob
 PyPDF2
 openai
 pymongo
+azure.ai.textanalytics
 pydantic
 
