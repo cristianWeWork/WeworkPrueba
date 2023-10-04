@@ -4,8 +4,6 @@ from azure.cognitiveservices.speech.audio import AudioOutputConfig, AudioOutputS
 from dotenv import load_dotenv
 import requests
 import datetime
-from fastapi.responses import FileResponse
-import xml.etree.ElementTree as ET
 import resources.database_dir.database_connections as bbdd
 import resources.blob_storage.blob_functions as blobf
 import resources.text_analytics.text_functions as txtf
