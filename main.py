@@ -1,11 +1,11 @@
 from logging.config import dictConfigClass
-from fastapi import FastAPI, Form, Request, status, File, UploadFile
+from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from typing import Any, Dict, List, Annotated
 import uvicorn
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from resources import translatorApp
 from resources.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
 import os
@@ -45,22 +45,42 @@ class itemToSpeech(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "voz": "es-CU-BelkysNeural",
+                    "voice": "es-CU-BelkysNeural",
                     "text":"Muy buenas, Bienvenidos a los juegos del hambre",
-                    "idioma": "Spanish (Cuba)",
+                    "language": "Spanish (Cuba)",
                 }
             ]
         }
     }
 class AIobject(BaseModel):
     voz:str
-    text: str
-    idioma:str
-    format: str
-    url_audio: str
-    feelings: str
-    blendShapes: str
-    visemes: str
+    text: str | None = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+    idioma:str| None = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+    format: str| None = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+    url_audio: str| None = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+    feelings: str| None = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+    blendShapes: str| None = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+    visemes: str| None  = Field(
+        default=None, title="The description of the item", max_length=300
+    )
+
+class AIqueryobject(BaseModel):
+    voz:str
+
+   
+    
 class Message(BaseModel):
     role: str
     content: str
@@ -101,9 +121,7 @@ async def getTextToSpeech(item :itemToSpeech) :
         
         response = {
             "url_audio" : result['url_audio'],
-            
         }
-        
         return response
          
 
@@ -116,8 +134,16 @@ async def insertIntoDB(object: AIobject):
     return bbdd.insert_document(object)
 
 @app.get("/query/")
-async def getFromDB(object: AIobject):
-    return bbdd.find_document(object)
+async def getFromDB(request_data : AIqueryobject = Body(...)):
+    voz = request_data.voz
+    
+    if not voz:
+        raise HTTPException(status_code=400, detail="Los campos 'voz' son obligatorios")
+
+    result = bbdd.find_document({"voz": voz})
+    
+    return result
+
 
 @app.post("/update/")
 async def updateIntoDB(query, object: AIobject):

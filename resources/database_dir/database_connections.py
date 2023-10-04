@@ -19,7 +19,7 @@ def insert_document(data):
 
 # Read (Leer)
 def find_document(query):
-    result = collection.find_one(query)
+    result = collection.find_one(query, {'_id': 0})
     return result
 
 # Update (Actualizar)
