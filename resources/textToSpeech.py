@@ -103,7 +103,7 @@ async def getAudioText(text: str, voice: str, language: str):
     
     bbdd.update_url_audio({"_id" : id}, {"url_audio": url_audio})
     
-    return url_audio
+    return url_audio,  str(id)
 
 # Utility
 

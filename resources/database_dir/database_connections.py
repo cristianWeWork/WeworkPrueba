@@ -22,7 +22,7 @@ def find_document(query):
     result = collection.find_one(query, sort=[("_id", -1)])
     print (result)
     if result and "_id" in result:
-        del result["_id"]
+         result["_id"] = str(result['_id'])
 
     return result
     

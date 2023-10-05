@@ -1,4 +1,5 @@
 from logging.config import dictConfigClass
+from bson import ObjectId
 from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -77,7 +78,7 @@ class AIobject(BaseModel):
     )
 
 class AIqueryobject(BaseModel):
-    voz:str
+    id:str
 
    
     
@@ -112,15 +113,17 @@ async def getTextToSpeech(item :itemToSpeech) :
     }
     result = bbdd.find_document(query)
     if result == None:
-        url_audio = await getAudioText(item.text, item.voice, item.language)
+        url_audio, id = await getAudioText(item.text, item.voice, item.language)
         response = {
-            "url_audio" : url_audio
+            "url_audio" : url_audio,
+            "id" : id
         }
         return response
     else:
         
         response = {
             "url_audio" : result['url_audio'],
+            "url_audio" : result['_id'],
         }
         return response
          
@@ -133,14 +136,14 @@ async def getDBName():
 async def insertIntoDB(object: AIobject):
     return bbdd.insert_document(object)
 
-@app.get("/query/")
+@app.post("/query/")
 async def getFromDB(request_data : AIqueryobject = Body(...)):
-    voz = request_data.voz
+    _id = request_data.id
     
-    if not voz:
+    if not _id:
         raise HTTPException(status_code=400, detail="Los campos 'voz' son obligatorios")
 
-    result = bbdd.find_document({"voz": voz})
+    result = bbdd.find_document({"_id": ObjectId(_id)})
     
     return result
 
