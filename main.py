@@ -4,7 +4,7 @@ from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, 
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from typing import Any, Dict, List, Annotated
+from typing import Any, Dict, List, Annotated, Optional
 import uvicorn
 from pydantic import BaseModel, Field
 from resources import translatorApp
@@ -33,8 +33,7 @@ def get_streamed_ai_response(response):
 
 class Item(BaseModel):
     user: str
-    name: str | None = None
-
+    name: str 
 class itemTranslated(BaseModel):
     text: str
 
@@ -42,6 +41,7 @@ class itemToSpeech(BaseModel):
     text:str
     voice: str
     language:str
+    format: Optional[str] = "wav"
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -49,6 +49,7 @@ class itemToSpeech(BaseModel):
                     "voice": "es-CU-BelkysNeural",
                     "text":"Muy buenas, Bienvenidos a los juegos del hambre",
                     "language": "Spanish (Cuba)",
+                    "format": "ogg"
                 }
             ]
         }
@@ -109,11 +110,12 @@ async def getVoiceDetail(nationality: str) -> list:
 async def getTextToSpeech(item :itemToSpeech) :
     query = {
         "voz": item.voice,
-        "text": item.text
+        "text": item.text,
+        "format": item.format
     }
     result = bbdd.find_document(query)
     if result == None:
-        url_audio, id = await getAudioText(item.text, item.voice, item.language)
+        url_audio, id = await getAudioText(item.text, item.voice, item.language, item.format)
         response = {
             "url_audio" : url_audio,
             "id" : id

@@ -59,11 +59,19 @@ def getVoiceOptions(nationality: str):
         return []
 
 
-async def getAudioText(text: str, voice: str, language: str):
+async def getAudioText(text: str, voice: str, language: str, format: str ):
     aos = AudioOutputStream(None)
     speech_config = speechsdk.SpeechConfig(
         subscription=speechKey, region="westeurope")
-    file_name = "outputaudio.wav"
+    print("WOLOLOOOOOOOOOOO")
+    print(format)
+    if format == "mp3":
+        file_name = "outputaudio.mp3"
+    elif format == "ogg":
+        file_name = "outputaudio.ogg"
+    else:
+        file_name = "outputaudio.wav"
+    
     file_config = speechsdk.audio.AudioOutputConfig(
         filename=file_name)  # type: ignore
     speech_synthesizer = speechsdk.SpeechSynthesizer(
@@ -99,7 +107,7 @@ async def getAudioText(text: str, voice: str, language: str):
     
     id = bbdd.insert_document(data)
     
-    url_audio =  blobf.upload_File("outputaudio.wav", "{}.wav".format(id))
+    url_audio =  blobf.upload_File(file_name, "{}.{}".format(id, format))
     
     bbdd.update_url_audio({"_id" : id}, {"url_audio": url_audio})
     
