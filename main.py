@@ -123,7 +123,7 @@ async def getTextToSpeech(item :itemToSpeech) :
         
         response = {
             "url_audio" : result['url_audio'],
-            "url_audio" : result['_id'],
+            "id" : result['_id'],
         }
         return response
          
