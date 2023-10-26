@@ -1,3 +1,4 @@
+import io
 from logging.config import dictConfigClass
 from bson import ObjectId
 from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
@@ -7,12 +8,17 @@ from fastapi.templating import Jinja2Templates
 from typing import Any, Dict, List, Annotated, Optional
 import uvicorn
 from pydantic import BaseModel, Field
-from resources import translatorApp
-from resources.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
+from resources.azureSTTS import translatorApp
+from resources.azureSTTS.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
+from resources.azureSTTS.speechToText import speechToText
 import os
 from fastapi.middleware.cors import CORSMiddleware
 import resources.database_dir.database_connections as bbdd
-import resources.chatgpy as chatai
+import resources.chatWithMe.chatgpy as chatai
+import resources.chatWithMe.embbedingChat as chatEm
+from resources.scriptService.scriptService import readRhubard
+
+
 
 app = FastAPI()
 origins = ["*"]
@@ -36,6 +42,11 @@ class Item(BaseModel):
     name: str 
 class itemTranslated(BaseModel):
     text: str
+
+class chattingWithEmb(BaseModel):
+    name: str
+    query:str
+
 
 class itemToSpeech(BaseModel):
     text:str
@@ -106,7 +117,7 @@ async def textToSpeech():
 async def getVoiceDetail(nationality: str) -> list:
     return getVoiceOptions(nationality)
     
-@app.post("/SpeechToText/")
+@app.post("/textToSpeech/")
 async def getTextToSpeech(item :itemToSpeech) :
     query = {
         "voz": item.voice,
@@ -115,7 +126,7 @@ async def getTextToSpeech(item :itemToSpeech) :
     }
     result = bbdd.find_document(query)
     if result == None:
-        url_audio, id = await getAudioText(item.text, item.voice, item.language, item.format)
+        url_audio, id = await getAudioText(item.text, item.voice, item.language, item.format) # type: ignore
         response = {
             "url_audio" : url_audio,
             "id" : id
@@ -173,6 +184,32 @@ async def chatingContWithAi(request: Request):
 
     return response
 
+@app.post("/messageEmb")
+async def chatingWithLLM(pdf_file:  Annotated[UploadFile, File()]):
+    
+    response = await chatEm.chatingWithLLM(pdf_file)
+
+    return response
+
+@app.post("/ContinueMessageEmb")
+async def ContinueMessageEmb(request: chattingWithEmb):
+   
+    print(request)
+    response = await chatEm.stillChatingWithLLM(request.query, request.name)
+
+    return response
+
+@app.post("/speechToText/")
+async def speechText(audio: Annotated[UploadFile, File()]):    
+    audio_data = await audio.read()
+    
+    response = await speechToText(audio_data)
+
+@app.post("/rhubardTranslate/")
+async def rhubard(audio: Annotated[UploadFile, File()]): 
+    audio_data = await audio.read()
+    response = await readRhubard(audio)
+    
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
 

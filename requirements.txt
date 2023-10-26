@@ -12,4 +12,5 @@ openai
 pymongo
 azure.ai.textanalytics
 pydantic
-
+pydub 
+ffmpeg
