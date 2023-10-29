@@ -206,8 +206,10 @@ async def speechText(audio: Annotated[UploadFile, File()]):
     response = await speechToText(audio_data)
 
 @app.post("/rhubardTranslate/")
-async def rhubard(audio: Annotated[UploadFile, File()]): 
+async def rhubard(audio: UploadFile): 
+    
     audio_data = await audio.read()
+    print(audio_data)
     response = await readRhubard(audio)
     
 if __name__ == '__main__':
