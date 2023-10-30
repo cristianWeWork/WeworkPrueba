@@ -14,3 +14,4 @@ azure.ai.textanalytics
 pydantic
 pydub 
 ffmpeg
+httpx

@@ -172,7 +172,7 @@ async def deleteFromDB(query):
 @app.post("/message")
 async def chatingWithAi(pdf_file:  Annotated[UploadFile, File()], whoAmI: Annotated[str, "Quien soy?"] = Form(...)):
     
-    response = await chatai.chatingWithchatGpt(pdf_file, whoAmI)
+    response =  chatai.chatingWithchatGpt(pdf_file, whoAmI)
 
     return response
 
