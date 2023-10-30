@@ -1,4 +1,3 @@
-import io
 from logging.config import dictConfigClass
 from bson import ObjectId
 from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
@@ -11,7 +10,6 @@ from pydantic import BaseModel, Field
 from resources.azureSTTS import translatorApp
 from resources.azureSTTS.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
 # from resources.azureSTTS.speechToText import speechToText
-import os
 from fastapi.middleware.cors import CORSMiddleware
 import resources.database_dir.database_connections as bbdd
 import resources.chatWithMe.chatgpy as chatai
