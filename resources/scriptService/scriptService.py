@@ -1,15 +1,7 @@
 import os
 import subprocess
-from pydub import AudioSegment
 import json
-import shutil
-import tempfile
-
 import platform
-from pathlib import Path
-import fastapi
-import librosa
-
 #Sistema Operativo en el que estamos
 sistema = platform.system()
 

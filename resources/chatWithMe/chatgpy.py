@@ -1,15 +1,10 @@
-from fastapi import FastAPI
 from typing import List, Dict
-from fastapi.middleware.cors import CORSMiddleware
 import os
 import openai
-from fastapi.responses import StreamingResponse
 import PyPDF2
 from io import BytesIO
 from pydantic import BaseModel
-import io
-import httpx
-import base64
+
 openai.api_key = os.getenv('OPENAPI_KEY')
 
 def get_streamed_ai_response(response):
