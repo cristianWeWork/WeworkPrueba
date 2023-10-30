@@ -199,11 +199,11 @@ async def ContinueMessageEmb(request: chattingWithEmb):
 
     return response
 
-@app.post("/speechToText/")
-async def speechText(audio: Annotated[UploadFile, File()]):    
-    audio_data = await audio.read()
+# @app.post("/speechToText/")
+# async def speechText(audio: Annotated[UploadFile, File()]):    
+#     audio_data = await audio.read()
     
-    response = await speechToText(audio_data)
+#     response = await speechToText(audio_data)
 
 @app.post("/rhubardTranslate/")
 async def rhubard(audio: UploadFile): 
