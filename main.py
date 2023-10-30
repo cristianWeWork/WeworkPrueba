@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import resources.database_dir.database_connections as bbdd
 import resources.chatWithMe.chatgpy as chatai
 import resources.chatWithMe.embbedingChat as chatEm
-from resources.scriptService.scriptService import readRhubard
+from resources.scriptService.scriptService import borradoDeAudio, readRhubard
 
 
 
@@ -210,7 +210,9 @@ async def rhubard(audio: UploadFile):
     
     audio_data = await audio.read()
     print(audio_data)
-    response = await readRhubard(audio)
+    response = await readRhubard(audio_data, audio)
+    borradoDeAudio(audio)
+    return response
     
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)

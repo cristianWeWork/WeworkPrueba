@@ -5,10 +5,15 @@ import json
 import shutil
 import tempfile
 
+import platform
 from pathlib import Path
 import fastapi
 import librosa
-async def readRhubard(audio):
+
+#Sistema Operativo en el que estamos
+sistema = platform.system()
+
+async def readRhubard(audio_data, audio):
         # Ruta de la carpeta que deseas crear
         ruta_carpeta = "./uploads"
 
@@ -19,26 +24,33 @@ async def readRhubard(audio):
         save_path = f"./uploads/"
         
         with open(os.path.join(save_path, audio.filename), 'wb') as disk_file:
-            file_bytes = await audio.read()
+            disk_file.write(audio_data)
 
-            disk_file.write(file_bytes)
-
-            print(f"Received file named {audio.filename} containing {len(file_bytes)} bytes. ")
-        # Realiza alguna operación con el archivo de audio
-        # comando =  'C:/Users/User/Desktop/"cosas cristian"/"prueba Python"/resources/scriptService/rhubard/windows/rhubarb.exe -f json C:/Users/User/Desktop/"cosas cristian"/"prueba Python"/resources/uploads/{} s-o C:/Users/User/Desktop/"cosas cristian"/"prueba Python"/resources/uploads/{}.json'.format(audio.filename,audio.filename)
-        comando =  'resources\\scriptService\\rhubard\\windows\\rhubarb.exe -f json  resources\\uploads\\{} -o resources\\uploads\\{}.json'.format(audio.filename,audio.filename)
-
+            print(f"Received file named {audio.filename} containing {len(audio_data)} bytes. ")
+        if sistema == "Windows": 
+            # comando Windows
+            comando =  'resources\\scriptService\\rhubard\\windows\\rhubarb.exe -f json  uploads\\{} -o uploads\\{}.json'.format(audio.filename,audio.filename)
+            # comando Linux
+        else :
+            comando = './resources/scriptService/rhubard/Linux/rhubarb.exe -f json  ./uploads/{} -o ./uploads/{}.json'.format(audio.filename,audio.filename)
+        checkpoint = True 
         try:
-            resultado = subprocess.run(comando, shell=True, check=True, text=True)
-            print("La ejecución fue exitosa. Código de salida:", resultado.returncode)
+            if (len(audio_data) > 0):
+                resultado = subprocess.run(comando, shell=True, check=True, text=True)
+                checkpoint = False
+                print("La ejecución fue exitosa. Código de salida:", resultado.returncode)
         except subprocess.CalledProcessError as e:
             print("La ejecución falló. Código de salida:", e.returncode)
             
             
-        # with open('{}.json'.format(audio.filename)) as fp:
-        #     data = json.load(fp)
-        #     print(data)
-            # os.remove('{}.json'.format(audio.filename))
-            # os.remove(audio.filename)
-        # return data
-   
+        with open('./uploads/{}.json'.format(audio.filename)) as fp:
+            data = json.load(fp)
+            print(data)
+            
+        return data
+    
+def borradoDeAudio(audio):
+    os.remove('./uploads/{}.json'.format(audio.filename))
+    os.remove('./uploads/{}'.format(audio.filename))
+        
+        
