@@ -10,7 +10,7 @@ import uvicorn
 from pydantic import BaseModel, Field
 from resources.azureSTTS import translatorApp
 from resources.azureSTTS.textToSpeech import getVoicesList, getVoiceOptions, getAudioText
-from resources.azureSTTS.speechToText import speechToText
+# from resources.azureSTTS.speechToText import speechToText
 import os
 from fastapi.middleware.cors import CORSMiddleware
 import resources.database_dir.database_connections as bbdd
