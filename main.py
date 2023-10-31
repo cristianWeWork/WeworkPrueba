@@ -206,9 +206,8 @@ async def ContinueMessageEmb(request: chattingWithEmb):
 async def rhubard(audio: UploadFile): 
     
     audio_data = await audio.read()
-    print(audio_data)
     response = await readRhubard(audio_data, audio)
-    borradoDeAudio(audio)
+    # borradoDeAudio(audio)
     return response
     
 if __name__ == '__main__':
