@@ -24,7 +24,7 @@ async def readRhubard(audio_data, audio):
             comando =  'resources\\scriptService\\rhubard\\windows\\rhubarb.exe -f json  uploads\\{} -o uploads\\{}.json'.format(audio.filename,audio.filename)
             # comando Linux
         else :
-            comando = './resources/scriptService/rhubard/Linux/rhubarb.exe -f json  ./uploads/{} -o ./uploads/{}.json'.format(audio.filename,audio.filename)
+            comando = './resources/scriptService/rhubard/Linux/rhubarb -f json  ./uploads/{} -o ./uploads/{}.json'.format(audio.filename,audio.filename)
         checkpoint = True 
         try:
             if (len(audio_data) > 0):
