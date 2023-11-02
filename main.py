@@ -204,11 +204,16 @@ async def ContinueMessageEmb(request: chattingWithEmb):
 
 @app.post("/rhubardTranslate/")
 async def rhubard(audio: UploadFile): 
-    
-    audio_data = await audio.read()
-    response = await readRhubard(audio_data, audio)
-    # borradoDeAudio(audio)
-    return JSONResponse(response)
+    try:
+        audio_data = await audio.read()
+        response = await readRhubard(audio_data, audio)
+        borradoDeAudio(audio)
+        return JSONResponse(response)
+    except ConnectionError as e:
+        with open('./uploads/error.json') as fp:
+                data = fp.write(str(e))
+                print(data)
+            
     
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
