@@ -7,6 +7,7 @@ sistema = platform.system()
 
 async def readRhubard(audio_data, audio):
         # Ruta de la carpeta que deseas crear
+    try:
         ruta_carpeta = "./uploads"
 
         # Verifica si la carpeta no existe y, en ese caso, créala
@@ -34,12 +35,16 @@ async def readRhubard(audio_data, audio):
         except subprocess.CalledProcessError as e:
             print("La ejecución falló. Código de salida:", e.returncode)
             
-            
         with open('./uploads/{}.json'.format(audio.filename)) as fp:
             data = json.load(fp)
             print(data)
             
         return data
+    except ConnectionError as e:
+        with open('./uploads/error.json') as fp:
+                data = fp.write(str(e))
+                print(data)
+            
     
 def borradoDeAudio(audio):
     os.remove('./uploads/{}.json'.format(audio.filename))
