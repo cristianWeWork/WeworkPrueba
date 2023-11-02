@@ -116,12 +116,15 @@ async def getVoiceDetail(nationality: str) -> list:
     
 @app.post("/textToSpeech/")
 async def getTextToSpeech(item :itemToSpeech) :
+    
     query = {
         "voz": item.voice,
         "text": item.text,
         "format": item.format
     }
     result = bbdd.find_document(query)
+    print(result)
+    
     if result == None:
         url_audio, id = await getAudioText(item.text, item.voice, item.language, item.format) # type: ignore
         response = {

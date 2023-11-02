@@ -96,7 +96,7 @@ async def getAudioText(text: str, voice: str, language: str, format: str ):
         "voz": voice,
         "text": text,
         "idioma": language,
-        "format": "text",
+        "format": format,
         "url_audio": "",
         "sentiments": { "sentiment":feelings.sentiment, "sentiment_score": {"positive":feelings.confidence_scores.positive,"negative":feelings.confidence_scores.negative,"neutral":feelings.confidence_scores.neutral} }, # type: ignore
         "blendShapes": blendShapes,
