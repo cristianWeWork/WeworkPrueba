@@ -1,6 +1,6 @@
 from bson import ObjectId
 from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
-from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from typing import Any, Dict, List, Annotated, Optional
@@ -208,7 +208,7 @@ async def rhubard(audio: UploadFile):
     audio_data = await audio.read()
     response = await readRhubard(audio_data, audio)
     # borradoDeAudio(audio)
-    return response
+    return JSONResponse(response)
     
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
