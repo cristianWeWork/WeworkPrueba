@@ -170,7 +170,7 @@ async def deleteFromDB(query):
     return bbdd.delete_document(query)
 
 @app.post("/message")
-async def chatingWithAi(pdf_file:  Annotated[UploadFile, File()], whoAmI: Annotated[str, "Quien soy?"] = Form(...)):
+async def chatingWithAi(pdf_file: UploadFile, whoAmI: Annotated[str, "Quien soy?"] = Form(...)):
     
     response =  chatai.chatingWithchatGpt(pdf_file, whoAmI)
 
@@ -185,7 +185,7 @@ async def chatingContWithAi(request: Request):
     return response
 
 @app.post("/messageEmb")
-async def chatingWithLLM(pdf_file:  Annotated[UploadFile, File()]):
+async def chatingWithLLM(pdf_file:  UploadFile):
     
     response = await chatEm.chatingWithLLM(pdf_file)
 
