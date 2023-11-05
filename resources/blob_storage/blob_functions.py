@@ -8,7 +8,6 @@ container_client = blob_service_client.get_container_client(container_name)
 
 def upload_File(file, blob_name):
     blob_client = container_client.get_blob_client(blob_name)
-     
     with open(file, "rb") as data:
         blob_client.upload_blob(data, overwrite=True)
     return blob_client.url

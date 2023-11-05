@@ -6,6 +6,8 @@ from langchain.chains import VectorDBQA
 import PyPDF2
 from io import BytesIO
 import os
+import resources.blob_storage.blob_functions as blobf
+
 import names
 openai_api_key = os.getenv('OPENAPI_KEY')
 
@@ -40,6 +42,7 @@ async def chatingWithLLM(pdfFile):
 
     embeddings = OpenAIEmbeddings(openai_api_key =openai_api_key)
     vectordb = Chroma.from_texts(pdf_Text, embeddings, persist_directory=persist_directory)
+    blobf.
     query = "Hazme un resumen del texto."
     response = vectorEmbeddingResponse(vectordb, query)
     vectordb.persist()
