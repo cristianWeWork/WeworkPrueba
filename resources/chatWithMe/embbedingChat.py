@@ -7,7 +7,7 @@ import PyPDF2
 from io import BytesIO
 import os
 import resources.blob_storage.blob_functions as blobf
-
+import shutil
 import names
 openai_api_key = os.getenv('OPENAPI_KEY')
 
@@ -42,11 +42,18 @@ async def chatingWithLLM(pdfFile):
 
     embeddings = OpenAIEmbeddings(openai_api_key =openai_api_key)
     vectordb = Chroma.from_texts(pdf_Text, embeddings, persist_directory=persist_directory)
-    blobf.
+    blobf.upload_blob_directory(name)    
     query = "Hazme un resumen del texto."
     response = vectorEmbeddingResponse(vectordb, query)
     vectordb.persist()
     vectordb = None
+    try:
+        shutil.rmtree(name)
+        print(f"La carpeta '{name}' se ha eliminado correctamente.")
+    except FileNotFoundError:
+        print(f"La carpeta '{name}' no existe.")
+    except OSError as e:
+        print(f"Se produjo un error al eliminar la carpeta: {str(e)}")
     return {"response": response, "name" : name}
 
 async def stillChatingWithLLM(query, name):
