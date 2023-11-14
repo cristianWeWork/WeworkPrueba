@@ -1,5 +1,5 @@
 from bson import ObjectId
-from fastapi import Body, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
+from fastapi import Body, Cookie, FastAPI, Form, HTTPException, Query, Request, status, File, UploadFile
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse,StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -43,7 +43,10 @@ class itemTranslated(BaseModel):
 class chattingWithEmb(BaseModel):
     name: str
     query:str
-
+class chattingGPTNew(BaseModel):
+    assistant_id: str
+    thread_id:str
+    text: str
 
 class itemToSpeech(BaseModel):
     text:str
@@ -170,9 +173,9 @@ async def deleteFromDB(query):
     return bbdd.delete_document(query)
 
 @app.post("/message")
-async def chatingWithAi(pdf_file: UploadFile, whoAmI: Annotated[str, "Quien soy?"] = Form(...)):
+async def chatingWithAi():
     
-    response =  chatai.chatingWithchatGpt(pdf_file, whoAmI)
+    response =  await chatai.chatingContWithAi()
 
     return response
 
@@ -180,9 +183,9 @@ async def chatingWithAi(pdf_file: UploadFile, whoAmI: Annotated[str, "Quien soy?
 async def chatingContWithAi(request: Request):
     data = await request.json()
     print(data)
-    response = await chatai.chatingContWithAi(data)
+    # response = await chatai.chatingContWithAi(data)
 
-    return response
+    # return response
 
 @app.post("/messageEmb")
 async def chatingWithLLM(pdf_file:  UploadFile):
@@ -217,6 +220,21 @@ async def rhubard(audio: UploadFile):
                 data = fp.write(str(e))
                 print(data)
             
+    
+@app.get("/getSessionThread")
+async def getSessionThread(request_id: str = Cookie(None)):
+    print(request_id)
+    return chatai.createSessionThread()    
+    
+@app.post("/chatNewGPT")
+async def getMessages(request: chattingGPTNew):
+    
+    return chatai.messagesFromGPT(request.assistant_id,request.thread_id, request.text)
+    
+    
+    
+    
+    
     
 if __name__ == '__main__':
     uvicorn.run('myapp:app', host='0.0.0.0', port=8000)
