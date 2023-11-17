@@ -140,3 +140,12 @@ def messagesFromGPT(assistant_id : str, thread_id : str, text : str):
         return returnData
     else:
         return finalData
+
+
+def listAssistants():
+    my_assistants = client.beta.assistants.list(
+        order="desc",
+        limit=20,
+    )
+    print(my_assistants)
+    return my_assistants.data

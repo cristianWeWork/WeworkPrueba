@@ -232,7 +232,10 @@ async def getMessages(request: chattingGPTNew):
     return chatai.messagesFromGPT(request.assistant_id,request.thread_id, request.text)
     
     
+@app.get("/getAssistants")
+async def getListAssistants():
     
+    return chatai.listAssistants()
     
     
     
